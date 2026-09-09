@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>給全世界最可愛的老婆 ❤️ 今晚吃什麼？</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sweetpink: '#ff758f',
+            bubblegum: '#ffb3c1',
+            creampink: '#fff0f3',
+            lovepink: '#c9184a',
+          },
+          animation: {
+            'bounce-slow': 'bounce 2s infinite',
+            'pulse-fast': 'pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'wiggle': 'wiggle 0.5s ease-in-out infinite',
+          },
+          keyframes: {
+            wiggle: {
+              '0%, 100%': { transform: 'rotate(-3deg)' },
+              '50%': { transform: 'rotate(3deg)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap');
+    
+    body {
+      font-family: 'Zen Maru Gothic', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+
+    /* 漂浮愛心背景動畫 */
+    .heart-bg {
+      position: absolute;
+      font-size: 1.5rem;
+      pointer-events: none;
+      animation: floatUp 6s linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(105vh) scale(0.6) rotate(0deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-10vh) scale(1.3) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* 點擊爆發愛心 */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      animation: burst 1s ease-out forwards;
+      z-index: 9999;
+    }
+
+    @keyframes burst {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--tx), var(--ty)) scale(1.5);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-creampink via-pink-100 to-rose-200 min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+
+  <!-- 背景愛心生成層 -->
+  <div id="heartsContainer" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <!-- 主卡片容器 -->
+  <main class="relative z-10 w-full max-w-lg bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-pink-200 text-center transition-all duration-300">
+    
+    <!-- 可愛標題裝飾 -->
+    <div class="inline-flex items-center gap-2 bg-pink-100 px-4 py-1.5 rounded-full mb-3 text-pink-600 font-bold text-xs sm:text-sm tracking-wider shadow-inner">
+      <span>👑</span> 老婆專屬幸福點餐機 <span>✨</span>
+    </div>
+
+    <h1 class="text-2xl sm:text-3xl font-black text-rose-600 mb-2 leading-relaxed">
+      親愛的，今晚想吃什麼？ 💕
+    </h1>
+    
+    <p class="text-gray-500 text-xs sm:text-sm mb-4">
+      請依照直覺做出今晚最誠實的選擇～ 🥰
+    </p>
+
+    <!-- 可愛表情 GIF 區域 (使用高穩定度 SVG 插畫組成的動態小可愛) -->
+    <div class="relative w-36 h-36 mx-auto mb-6 flex items-center justify-center">
+      <div class="absolute inset-0 bg-pink-200 rounded-full animate-ping opacity-30"></div>
+      <div id="characterAvatar" class="relative z-10 text-7xl transition-transform duration-300 hover:scale-110 cursor-pointer">
+        🐱
+      </div>
+      <div id="bubbleMsg" class="absolute -top-4 -right-10 bg-white border-2 border-rose-300 text-rose-500 text-xs px-3 py-1.5 rounded-2xl rounded-bl-none shadow-md whitespace-nowrap animate-bounce font-bold">
+        好餓好餓！🤤
+      </div>
+    </div>
+
+    <!-- 抓不到次數提示 -->
+    <div id="tauntArea" class="h-6 text-xs text-rose-400 font-bold mb-3 transition-opacity opacity-0">
+      抓不到啦！便當店早就打烊囉～ 😜
+    </div>
+
+    <!-- 按鈕操作區 -->
+    <div class="relative min-h-[140px] flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-2">
+      
+      <!-- 「吃我」選項 (巨大化、發光、心跳動畫) -->
+      <button 
+        id="eatMeBtn"
+        onclick="chooseEatMe()"
+        class="order-1 sm:order-none z-20 px-8 py-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-extrabold text-lg sm:text-xl rounded-2xl shadow-lg hover:shadow-pink-400/50 transform hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2 animate-pulse-fast">
+        <span>😋</span> 吃我呀！ (免費續碗)
+      </button>
+
+      <!-- 「便當」選項 (調皮逃跑按鈕) -->
+      <button 
+        id="bentoBtn"
+        class="order-2 sm:order-none px-6 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-base rounded-2xl shadow border-2 border-gray-200 transition-all duration-150 flex items-center gap-2">
+        <span id="bentoIcon">🍱</span> <span id="bentoText">便當</span>
+      </button>
+
+    </div>
+
+    <!-- 底部貼心備註 -->
+    <div class="mt-6 pt-4 border-t border-dashed border-pink-200 text-gray-400 text-xs flex justify-between items-center">
+      <span>溫馨提醒：本機型最終解釋權歸老公所有 💖</span>
+      <button onclick="resetButtonPos()" class="text-pink-400 underline hover:text-pink-600 text-xs">重置位置</button>
+    </div>
+
+  </main>
+
+  <!-- 肉麻情話彈窗 (Modal) -->
+  <div id="loveModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-pink-400 text-center relative transform scale-90 transition-transform duration-300" id="modalCard">
+      
+      <!-- 關閉按鈕 -->
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-rose-500 text-2xl font-bold p-1">
+        ✕
+      </button>
+
+      <div class="text-6xl mb-3 animate-bounce">
+        🧑‍🍳💖
+      </div>
+
+      <h2 class="text-2xl font-black text-rose-600 mb-1">
+        🎉 老婆做出最完美的選擇！
+      </h2>
+      <p class="text-xs text-pink-400 font-bold mb-4">★ 榮獲全宇宙最幸福人夫五星好評認證 ★</p>
+
+      <!-- 肉麻情話卡片 -->
+      <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-4 sm:p-5 mb-5 text-left relative overflow-hidden shadow-inner">
+        <div class="absolute -right-2 -bottom-2 text-rose-100 text-7xl font-serif pointer-events-none select-none">”</div>
+        <p class="text-xs text-rose-400 font-bold mb-1 flex items-center gap-1">
+          <span>📋</span> <span id="menuTitle">今晚特製菜單：</span>
+        </p>
+        <p id="loveQuote" class="text-rose-800 text-sm sm:text-base font-semibold leading-relaxed relative z-10 min-h-[72px] flex items-center">
+          「今晚主廚推薦：新鮮小肥肉一份，淋上滿滿的愛意，全熟、無骨、無反式脂肪，只甜在妳心裡！❤️」
+        </p>
+      </div>
+
+      <!-- 規格與評價標籤 -->
+      <div class="grid grid-cols-3 gap-2 text-center text-xs mb-5">
+        <div class="bg-pink-100/70 p-2 rounded-xl text-rose-700 font-medium">
+          <div class="font-bold">熱量</div>
+          <div>0 大卡 🥗</div>
+        </div>
+        <div class="bg-pink-100/70 p-2 rounded-xl text-rose-700 font-medium">
+          <div class="font-bold">甜度</div>
+          <div>100% 🍯</div>
+        </div>
+        <div class="bg-pink-100/70 p-2 rounded-xl text-rose-700 font-medium">
+          <div class="font-bold">售價</div>
+          <div>親一下就好 💋</div>
+        </div>
+      </div>
+
+      <!-- 互動按鈕群 -->
+      <div class="flex flex-col gap-2">
+        <button onclick="nextQuote()" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2">
+          <span>💌</span> 換一句更肉麻的！
+        </button>
+        <button onclick="giveHug()" class="w-full py-2.5 bg-pink-100 hover:bg-pink-200 text-rose-600 rounded-xl font-bold transition-all text-sm">
+          🤗 立刻給老公一個大擁抱
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // --- 變數與狀態 ---
+    const bentoBtn = document.getElementById('bentoBtn');
+    const eatMeBtn = document.getElementById('eatMeBtn');
+    const bentoText = document.getElementById('bentoText');
+    const bentoIcon = document.getElementById('bentoIcon');
+    const tauntArea = document.getElementById('tauntArea');
+    const characterAvatar = document.getElementById('characterAvatar');
+    const bubbleMsg = document.getElementById('bubbleMsg');
+    const loveModal = document.getElementById('loveModal');
+    const modalCard = document.getElementById('modalCard');
+    const loveQuote = document.getElementById('loveQuote');
+    const heartsContainer = document.getElementById('heartsContainer');
+
+    let escapeCount = 0;
+    let eatMeScale = 1;
+    let bentoScale = 1;
+
+    // 幽默嘲諷台詞庫（便當逃跑時變更）
+    const taunts = [
+      "便當店今天公休啦！😜",
+      "欸～點不到點不到～🤪",
+      "便當熱量太高了，吃我比較健康！🥗",
+      "再追我要報警囉～🚨",
+      "放棄吧！命運只允許妳選吃我！💖",
+      "妳真的捨得讓我吃便當嗎？🥺",
+      "便當外送員迷路到火星去啦！🚀",
+      "認命吧，可愛的老婆大人！👑"
+    ];
+
+    // 便當按鈕隨機變化文字
+    const bentoLabels = [
+      { text: "便當 (售罄)", icon: "🚫" },
+      { text: "冷掉的飯", icon: "🥶" },
+      { text: "吃我比較香", icon: "👈" },
+      { text: "點不到啦", icon: "🏃" },
+      { text: "廚師落跑了", icon: "👨‍🍳" },
+      { text: "便當有青椒", icon: "🫑" },
+      { text: "真的點不到", icon: "👻" }
+    ];
+
+    // 肉麻情話清單
+    const loveQuotes = [
+      "「主廚特製：我的整顆心，全熟透的真心，佐以無上限的擁抱與親親。菜單備註：終身免費續碗，僅限可愛老婆專享 ❤️」",
+      "「老婆，妳知道便當跟我的差別在哪嗎？便當只能填飽妳的胃，但我能甜滿妳一輩子！🥰」",
+      "「今晚菜單保證：0反式脂肪、0人工色素，只有100%全心全意為妳跳動的老公！快來開動吧～💋」",
+      "「只要有妳在身邊，吃什麼都是米其林三星；但今晚我就是妳專屬的甜點，想怎麼吃就怎麼吃！🎂」",
+      "「被可愛老婆吃掉是我一生最大的榮幸！請問現在可以兌換一個深情的擁抱與吻了嗎？😘」",
+      "「今晚特選頂級人夫套餐：附贈洗碗一星期、肩頸按摩60分鐘，還有永遠只愛妳的真心！💖」"
+    ];
+
+    let currentQuoteIndex = 0;
+
+    // --- 音效生成 (使用 Web Audio API，免外部載入問題) ---
+    function playBeep(freq = 600, duration = 0.1, type = 'sine') {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {
+        // 忽略音效限制
+      }
+    }
+
+    // --- 便當按鈕逃跑邏輯 ---
+    function escapeBento(e) {
+      if (e) {
+        e.preventDefault();
+      }
+
+      escapeCount++;
+      playBeep(450 + Math.random() * 300, 0.08, 'triangle');
+
+      // 改變便當文字與圖示
+      const randomLabel = bentoLabels[Math.floor(Math.random() * bentoLabels.length)];
+      bentoText.textContent = randomLabel.text;
+      bentoIcon.textContent = randomLabel.icon;
+
+      // 顯示嘲諷台詞
+      const randomTaunt = taunts[Math.floor(Math.random() * taunts.length)];
+      tauntArea.textContent = randomTaunt;
+      tauntArea.style.opacity = '1';
+
+      // 改變頭像表情
+      const avatars = ["😹", "🙈", "😜", "🤭", "👀", "🥳"];
+      characterAvatar.textContent = avatars[Math.floor(Math.random() * avatars.length)];
+      bubbleMsg.textContent = "抓不到～抓不到～";
+
+      // 讓「吃我」按鈕越來越大，「便當」按鈕越來越小
+      if (eatMeScale < 1.6) {
+        eatMeScale += 0.08;
+        eatMeBtn.style.transform = `scale(${eatMeScale})`;
+      }
+
+      if (bentoScale > 0.5) {
+        bentoScale -= 0.06;
+      }
+
+      // 計算安全逃跑座標 (確保在可視範圍內)
+      const btnWidth = bentoBtn.offsetWidth || 120;
+      const btnHeight = bentoBtn.offsetHeight || 50;
+      
+      const padding = 20;
+      const maxW = window.innerWidth - btnWidth - padding;
+      const maxH = window.innerHeight - btnHeight - padding;
+
+      const randomX = Math.max(padding, Math.random() * maxW);
+      const randomY = Math.max(padding, Math.random() * maxH);
+
+      // 移動便當按鈕為 fixed 定位
+      bentoBtn.style.position = 'fixed';
+      bentoBtn.style.left = `${randomX}px`;
+      bentoBtn.style.top = `${randomY}px`;
+      bentoBtn.style.transform = `scale(${bentoScale}) rotate(${(Math.random() - 0.5) * 30}deg)`;
+      bentoBtn.style.zIndex = '99';
+    }
+
+    // 監聽滑鼠靠近與觸控碰擊
+    bentoBtn.addEventListener('mouseenter', escapeBento);
+    bentoBtn.addEventListener('click', escapeBento);
+    bentoBtn.addEventListener('touchstart', (e) => {
+      escapeBento(e);
+    }, { passive: false });
+
+    // 重置位置功能（怕老婆真的生氣）
+    function resetButtonPos() {
+      bentoBtn.style.position = 'relative';
+      bentoBtn.style.left = 'auto';
+      bentoBtn.style.top = 'auto';
+      bentoBtn.style.transform = 'scale(1)';
+      eatMeBtn.style.transform = 'scale(1)';
+      bentoScale = 1;
+      eatMeScale = 1;
+      bentoText.textContent = "便當";
+      bentoIcon.textContent = "🍱";
+      tauntArea.style.opacity = '0';
+      characterAvatar.textContent = "🐱";
+      bubbleMsg.textContent = "再選一次！😋";
+    }
+
+    // --- 選擇「吃我」邏輯 ---
+    function chooseEatMe() {
+      // 成功歡呼音效
+      playBeep(523.25, 0.15);
+      setTimeout(() => playBeep(659.25, 0.15), 100);
+      setTimeout(() => playBeep(783.99, 0.25), 200);
+
+      createHeartBurst();
+
+      // 開啟 Modal
+      loveModal.classList.remove('hidden');
+      setTimeout(() => {
+        loveModal.classList.remove('opacity-0');
+        modalCard.classList.remove('scale-90');
+        modalCard.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeModal() {
+      modalCard.classList.remove('scale-100');
+      modalCard.classList.add('scale-90');
+      loveModal.classList.add('opacity-0');
+      setTimeout(() => {
+        loveModal.classList.add('hidden');
+      }, 300);
+    }
+
+    // 切換情話
+    function nextQuote() {
+      playBeep(700, 0.08);
+      currentQuoteIndex = (currentQuoteIndex + 1) % loveQuotes.length;
+      
+      loveQuote.style.opacity = '0';
+      setTimeout(() => {
+        loveQuote.textContent = loveQuotes[currentQuoteIndex];
+        loveQuote.style.opacity = '1';
+      }, 150);
+
+      createHeartBurst(window.innerWidth / 2, window.innerHeight / 2, 8);
+    }
+
+    // 抱抱彩蛋
+    function giveHug() {
+      playBeep(880, 0.2);
+      createHeartBurst(window.innerWidth / 2, window.innerHeight / 2, 25);
+      
+      const originalText = loveQuote.textContent;
+      loveQuote.textContent = "🤗 (已為可愛老婆預約無限期超級熊抱！請隨時向老公索取兌現！)";
+      
+      setTimeout(() => {
+        loveQuote.textContent = originalText;
+      }, 3500);
+    }
+
+    // --- 愛心粒子爆發效果 ---
+    function createHeartBurst(x, y, count = 20) {
+      const hearts = ['❤️', '💖', '💘', '💕', '🌸', '✨', '🥰', '💋'];
+      const originX = x || window.innerWidth / 2;
+      const originY = y || window.innerHeight / 2;
+
+      for (let i = 0; i < count; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'particle text-xl sm:text-2xl';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heart.style.left = `${originX}px`;
+        heart.style.top = `${originY}px`;
+
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 60 + Math.random() * 140;
+        const tx = Math.cos(angle) * dist;
+        const ty = Math.sin(angle) * dist;
+
+        heart.style.setProperty('--tx', `${tx}px`);
+        heart.style.setProperty('--ty', `${ty}px`);
+        heart.style.animationDuration = `${0.6 + Math.random() * 0.6}s`;
+
+        document.body.appendChild(heart);
+
+        setTimeout(() => {
+          heart.remove();
+        }, 1200);
+      }
+    }
+
+    // --- 背景漂浮愛心 ---
+    function createFloatingHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart-bg';
+      const symbols = ['❤️', '💗', '🍓', '🍰', '✨', '💕', '🌸'];
+      heart.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      heart.style.left = `${Math.random() * 100}vw`;
+      heart.style.animationDuration = `${4 + Math.random() * 4}s`;
+      heart.style.fontSize = `${1 + Math.random() * 1.5}rem`;
+
+      heartsContainer.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 8000);
+    }
+
+    // 每隔一段時間生成漂浮愛心
+    setInterval(createFloatingHeart, 600);
+
+    // 點擊卡片頭像的互動彩蛋
+    characterAvatar.addEventListener('click', () => {
+      playBeep(800, 0.1);
+      createHeartBurst(window.innerWidth / 2, window.innerHeight / 2 - 50, 10);
+      bubbleMsg.textContent = "最喜歡老婆了！😽";
+    });
+  </script>
+</body>
+</html>
